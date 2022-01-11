@@ -1,0 +1,622 @@
+<!DOCTYPE html>
+<html>
+<title>Web Page Design</title>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#4285f4">
+<div id="container">
+  <div id="content">
+    <div id="about">
+      <h1>
+        <div style='float:left; margin-bottom:20px;'>
+          Error code
+        </div>
+        <div class="stage">
+          <div class="pyramid3d">
+            <div class="triangle side1"></div>
+            <div class="triangle side2"></div>
+            <div class="triangle side3"></div>
+            <div class="triangle side4"></div>
+          </div>
+        </div> 
+      </h1>
+      <h3 style='clear:both' class="subhead">
+          <div class="codebox" style="font-size:14px;background:black;">
+              <pre>
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Text;
+using System.Windows.Forms;
+namespace notpad
+{   
+    public partial class Form1 : Form   
+    {       
+        public SaveFileDialog sfd;
+        public OpenFileDialog ofd;
+        public int index;
+        #region "Constructor"       
+        public Form1()
+        {           
+            InitializeComponent();           
+            sfd = new SaveFileDialog();           
+            ofd = new OpenFileDialog();           
+            this.Text = "Untitled-Digital Diary";            
+            richTextBox1.TabIndex = 5;           
+            undoToolStripMenuItem.Enabled = false;           
+            richTextBox1.Focus();       
+        }       
+        #endregion
+        #region "Menu Item"       
+        private void newToolStripMenuItem_Click(object sender, EventArgs e)
+        {           
+            sfd.Title = "Save";           
+            DialogResult dr = MessageBox.Show("Do you want to save the file", "save", MessageBoxButtons.YesNo, MessageBoxIcon.Question);           
+            if (dr.Equals(DialogResult.Yes))        
+            {               
+                SaveFile();        
+            }           
+            else if (dr.Equals(DialogResult.No))
+            {               
+                richTextBox1.Clear();               
+                this.Text = "Untitled-Digital Diary";           
+            }
+        }
+        private void saveToolStripMenuItem_Click(object sender, EventArgs e)      
+        {           
+            SaveFile();//calling SaveFile user defined fucntion       
+        }             
+        private void openToolStripMenuItem_Click(object sender, EventArgs e)  
+        {          
+            if (richTextBox1.Modified == true)//checking either richtext box have entered value or not     
+            {             
+                DialogResult dr = MessageBox.Show("Do you want to save changes to the opened file", "unsaved document", MessageBoxButtons.YesNo, MessageBoxIcon.Question);  
+                if (dr == DialogResult.No)             
+                {  
+                    richTextBox1.Modified = false;               
+                    OpenFile();           
+                } 
+                    else         
+                {                  
+                    if (this.Text == "Untitled-Digital Diary")
+                    {
+                        SaveFile();                      
+                        OpenFile();
+                    }                  
+                    else               
+                    {
+                        DialogResult dr1 = MessageBox.Show("the text in the file has been changed.Do you want to save the changes", "Open", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+                        if (dr1 == DialogResult.Yes)          
+                        {
+                            richTextBox1.SaveFile(this.Text);    
+                            OpenFile();             
+                        }              
+                        else           
+                        {             
+                            OpenFile();   
+                        }                 
+                    }
+                }          
+            }          
+            else        
+            {           
+                OpenFile();   
+            }
+        }
+        private void exitToolStripMenuItem_Click(object sender, EventArgs e) 
+        {
+            if (richTextBox1.Modified == true)        
+            {
+                DialogResult dr = MessageBox.Show("Do you want to save the file before exiting", "unsaved file", MessageBoxButtons.YesNo, MessageBoxIcon.Question);         
+                if (dr == DialogResult.Yes) 
+                {                  
+                    SaveFile();
+                    richTextBox1.Modified = false;
+                    Application.Exit();    
+                }              
+                else            
+                {              
+                    richTextBox1.Modified = false;        
+                    Application.Exit();
+                }           
+            }       
+        }
+        private void toolStripButton1_Click(object sender, EventArgs e)  
+        {
+            SaveFile();      
+        }
+        private void saveAsToolStripMenuItem_Click(object sender, EventArgs e)   
+        {          
+            sfd.Title = "Save As";         
+            sfd.Filter = "Text Document|*.txt";       
+            sfd.DefaultExt = "txt";        
+            sfd.ShowDialog();             
+            richTextBox1.SaveFile(sfd.FileName, RichTextBoxStreamType.PlainText);    
+            this.Text = sfd.FileName;
+        }
+        private void cutToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            richTextBox1.Cut();
+        }
+        private void pasteToolStripMenuItem_Click(object sender, EventArgs e)    
+        {
+            richTextBox1.Paste();      
+        }
+        private void copyToolStripMenuItem_Click(object sender, EventArgs e)     
+        {  
+            richTextBox1.Copy();     
+        }
+        private void selectAllToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            richTextBox1.SelectAll();      
+        }
+        private void undoToolStripMenuItem_Click(object sender, EventArgs e) 
+
+        { 
+            if (richTextBox1.CanUndo)          
+            {
+                richTextBox1.Undo();     
+            }
+        }
+        private void redoToolStripMenuItem_Click(object sender, EventArgs e) 
+        {         
+            statusStrip1.Text = "used to redo last changed text";   
+            if (richTextBox1.CanRedo)         
+            {
+                richTextBox1.Redo();    
+            }      
+        }
+        private void timeDateToolStripMenuItem_Click(object sender, EventArgs e) 
+        {
+            richTextBox1.Text += Convert.ToString(DateTime.Now);    
+        }
+        private void findToolStripMenuItem_Click(object sender, EventArgs e)  
+        {
+            findform findob = new findform(this);         
+            findob.Show();      
+        }
+        private void fontToolStripMenuItem_Click(object sender, EventArgs e) 
+        {
+            FontDialog fd = new FontDialog();          
+            fd.Font = richTextBox1.SelectionFont;    
+            fd.Color = richTextBox1.SelectionColor;        
+            if (fd.ShowDialog() == DialogResult.OK)      
+            {                
+                richTextBox1.SelectionFont = fd.Font;   
+                richTextBox1.SelectionColor = fd.Color; 
+            }
+        }
+        private void wordWrapToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (wordWrapToolStripMenuItem.Checked == false)    
+            {
+                wordWrapToolStripMenuItem.Checked = true;      
+                richTextBox1.WordWrap = true;
+            }         
+            else          
+            {             
+                wordWrapToolStripMenuItem.Checked = false;          
+                richTextBox1.WordWrap = false;
+            }
+        }     
+        private void toolStripTextBox1_Click(object sender, EventArgs e)    
+        {         
+            Gotoform gob = new Gotoform(this);      
+            gob.Show();
+        }      
+        private void statusBarToolStripMenuItem_Click(object sender, EventArgs e)    
+        {            
+            //statuslabel1.Text = "Cols " + richTextBox1.Text.Length;      
+        }
+        private void findNextToolStripMenuItem_Click(object sender, EventArgs e)  
+        {          
+            findform f = new findform(this);       
+            f.Show();
+        }
+        private void replaceToolStripMenuItem_Click(object sender, EventArgs e)   
+        {           
+            replaceform ob = new replaceform(this);   
+            ob.Show();
+        }       
+        private void addBulletToolStripMenuItem_Click(object sender, EventArgs e)    
+        {
+            try       
+            {            
+                richTextBox1.BulletIndent = 10;
+                richTextBox1.SelectionBullet = true;      
+            }        
+            catch (Exception ex)      
+            {              
+                MessageBox.Show(ex.Message.ToString(), "Error"); 
+            }
+        }
+        private void removeBulletToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            try       
+            {             
+                richTextBox1.SelectionBullet = false;
+            }
+            catch (Exception ex)   
+            {            
+                MessageBox.Show(ex.Message.ToString(), "Error");
+            }     
+        }
+        private void leftIndentationToolStripMenuItem_Click(object sender, EventArgs e)
+
+        {          
+            try         
+            {           
+                richTextBox1.SelectionAlignment = HorizontalAlignment.Left;  
+            }         
+            catch (Exception ex1) 
+            {              
+                MessageBox.Show(ex1.Message.ToString());       
+            }
+        }
+        private void centerIntendationToolStripMenuItem_Click(object sender, EventArgs e)    
+        {         
+            try    
+            {              
+                richTextBox1.SelectionAlignment = HorizontalAlignment.Center;  
+            }       
+            catch (Exception ex1)  
+            {             
+                MessageBox.Show(ex1.Message.ToString());     
+            }      
+        }
+        private void rightIntendationToolStripMenuItem_Click(object sender, EventArgs e)
+        {          
+            try    
+            {            
+                richTextBox1.SelectionAlignment = HorizontalAlignment.Right;   
+            }          
+            catch (Exception ex1)  
+            {             
+                MessageBox.Show(ex1.Message.ToString()); 
+            }      
+        }
+        private void backGroundColorToolStripMenuItem_Click(object sender, EventArgs e)
+        {  
+            ColorDialog cr = new ColorDialog();     
+            if (cr.ShowDialog() == DialogResult.OK)        
+            {             
+                richTextBox1.BackColor = cr.Color;
+            }
+        }
+        private void toolStripTextBox2_Click(object sender, EventArgs e)
+        {          
+            richTextBox1.SelectedText = "";
+        }
+        private void aboutToolStripMenuItem_Click(object sender, EventArgs e) 
+        {           
+            AboutBox1 ab = new AboutBox1();     
+            ab.ShowDialog();      
+        }
+        #endregion     
+#region "Function To Save File"    
+        private void SaveFile()   
+        {
+            sfd.Title = "Save As";         
+            sfd.Filter = "Text Document|*.txt"; 
+            sfd.DefaultExt = "txt";
+            if (sfd.ShowDialog() == DialogResult.OK)   
+            {
+                richTextBox1.SaveFile(sfd.FileName, RichTextBoxStreamType.PlainText); 
+                this.Text = sfd.FileName;           
+            }      
+        }      
+#endregion     
+#region "User Defined Function to Open File" 
+            private void OpenFile()     
+            {          
+                ofd.Title = "Open Document";    
+                ofd.Filter = "Text Files|*.txt";
+                ofd.FileName = string.Empty;
+                if (ofd.ShowDialog() == DialogResult.OK)     
+                {            
+                    if (ofd.FileName == String.Empty)           
+                    {                  
+                        return;           
+                    }             
+                    else          
+                    {  
+                        string str = ofd.FileName;            
+                        richTextBox1.LoadFile(str,RichTextBoxStreamType.PlainText); 
+                        this.Text =ofd.FileName;              
+                    }        
+                }
+        }      
+#endregion              
+        private void richTextBox1_TextChanged(object sender, EventArgs e)      
+        {          
+            undoToolStripMenuItem.Enabled = true;        
+            statuslabel1.Text = "Line: " + (richTextBox1.GetLineFromCharIndex(Int32.MaxValue)+1) + "   Cols: " + richTextBox1.Text.Length;     
+        }                    
+#region "Printing"    
+        private void printPreviewToolStripMenuItem_Click(object sender, EventArgs e) 
+        {
+            printPreviewDialog1.Document = printDocument1;           
+            printPreviewDialog1.ShowDialog();
+        }
+        private void toolStripMenuItem1_Click(object sender, EventArgs e)
+        {
+            printDialog1.Document = printDocument1;
+            if (printDialog1.ShowDialog() == DialogResult.OK)      
+            {            
+                printDocument1.Print();      
+            }             
+        }
+        private void pageSetUPToolStripMenuItem_Click(object sender, EventArgs e) 
+        {           
+            pageSetupDialog1.Document = printDocument1;  
+            pageSetupDialog1.ShowDialog();
+        }
+        private void printDocument1_PrintPage(object sender, System.Drawing.Printing.PrintPageEventArgs e) 
+        {          
+            e.Graphics.DrawString(richTextBox1.Text, richTextBox1.Font, Brushes.Black, 100, 100);    
+        }
+    #endregion 
+    #region "Function For GoTo"      
+        public  void Goto(int line)   
+        {           
+            index = richTextBox1.GetFirstCharIndexFromLine(line - 1);        
+            richTextBox1.Select(index, 0);        
+            richTextBox1.Focus();
+        }
+    #endregion
+    #region "Function For FindNext"      
+        public void FindNext(string str)
+        {         
+            try      
+            {
+                if (index== -1)              
+                {                 
+                    MessageBox.Show("Word Search Complete");    
+                }
+                else           
+                {        
+                    int starting = richTextBox1.Text.IndexOf(str, index);          
+                    richTextBox1.Select(starting, str.Length);             
+                    richTextBox1.Focus();               
+                    index = starting+ str.Length;          
+                }           
+            }           
+            catch (SystemException s)
+            {              
+                MessageBox.Show(s.Message.ToString(),"Error message");
+            }
+        }      
+    #endregion
+    #region "Standard ToolBar Event"
+        private void toolStripButton6_Click(object sender, EventArgs e)  
+        {           
+            newToolStripMenuItem_Click(this, e);   
+        }
+        private void toolStripButton5_Click(object sender, EventArgs e)
+        {           
+            openToolStripMenuItem_Click(this, e);
+        }
+        private void printPreviewToolStripMenuItem1_Click(object sender, EventArgs e)
+        {          
+            printPreviewToolStripMenuItem_Click(this, e);
+        }
+        private void pageSetUPToolStripMenuItem1_Click(object sender, EventArgs e)
+        {            
+            pageSetUPToolStripMenuItem_Click(this, e);
+        }
+        private void toolStripButton4_Click(object sender, EventArgs e) 
+        {            
+            exitToolStripMenuItem_Click(this, e); 
+        }              
+        private void toolStripButton2_Click(object sender, EventArgs e) 
+        {           
+            backGroundColorToolStripMenuItem_Click(this, e);    
+        }
+        private void toolStripButton3_Click(object sender, EventArgs e) 
+        {          
+            fontToolStripMenuItem_Click(this, e); 
+        }
+        private void toolStripButton7_Click(object sender, EventArgs e)  
+        {         
+            addBulletToolStripMenuItem_Click(this, e);     
+        }       
+        private void toolStripButton8_Click(object sender, EventArgs e)
+        {         
+            cutToolStripMenuItem_Click(this, e);   
+        }
+        private void toolStripButton9_Click(object sender, EventArgs e) 
+        {           
+            copyToolStripMenuItem_Click(this, e);
+        }
+        private void toolStripButton10_Click(object sender, EventArgs e)  
+        {          
+            pasteToolStripMenuItem_Click(this, e);      
+        }
+    #endregion
+        private void Form1_Load(object sender, EventArgs e)   
+        {
+        }
+    }
+}
+</pre>
+          </div>
+      </h3>
+      <p id='pleft'>
+        He does freelance work, writes for <a href="https://css-tricks.com/css-animation-tricks/">CSS</a> <a href="https://css-tricks.com/controlling-css-animations-transitions-javascript/">Tricks</a>, worked at <a href="http://deltadatasoft.com/">Delta Data Software</a> as a front-end developer, and is continuously working on personal projects to up his game.
+      </p>
+    </div>
+  </div>
+</div>
+
+
+
+<style>
+.codebox {
+    margin:10%,10%,10%,10%;
+border: none;
+/*padding: 0px;*/
+font: 24px/36px sans-serif;
+width: 100%;
+/*height: 12%;*/
+overflow: scroll;
+}
+        ::-webkit-scrollbar {
+            width: 15px;
+            
+        }
+      
+        /* Track */
+        ::-webkit-scrollbar-track {
+            background: red;
+            border-radius: 20px;
+        }
+      
+        /* Handle */
+        ::-webkit-scrollbar-thumb {
+            background: green;
+            border-radius: 20px;
+        }
+      
+        /* Handle on hover */
+        ::-webkit-scrollbar-thumb:hover {
+            background: blue;
+        }
+body {
+  background-color: #141414;
+  background-image:url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHdpZHRoPScxMDAlJyBoZWlnaHQ9JzEyMCc+Cgk8ZGVmcz4KCQk8cGF0dGVybiBwYXR0ZXJuVW5pdHM9J3VzZXJTcGFjZU9uVXNlJyBpZD0nYycgd2lkdGg9JzYwJyBoZWlnaHQ9JzEyMCcgeD0nMCcgeT0nMCcgdmlld0JveD0nMCAwIDUgMTAnPgoJCQk8cGF0aCBmaWxsLW9wYWNpdHk9JzAnIHN0cm9rZT0nIzI5MjkyOScgc3Ryb2tlLXdpZHRoPScwLjA5JyBkPSdNLTIsMUw3LDEwTS0yLDZMNywxNU0tMiwtNEw3LDUnLz4KCQk8L3BhdHRlcm4+CgkJPHBhdHRlcm4gcGF0dGVyblVuaXRzPSd1c2VyU3BhY2VPblVzZScgaWQ9J2MyJyB3aWR0aD0nNjAnIGhlaWdodD0nMTIwJyB4PScxMDAlJyB5PScwJyB2aWV3Qm94PScwIDAgNSAxMCc+CgkJCTxwYXRoIGZpbGwtb3BhY2l0eT0nMCcgc3Ryb2tlPScjMjkyOTI5JyBzdHJva2Utd2lkdGg9JzAuMDknIGQ9J003LDFMLTIsMTBNNyw2TC0yLDE1TTcsLTRMLTIsNScvPgoJCTwvcGF0dGVybj4KCTwvZGVmcz4KCTxyZWN0IHdpZHRoPSc1MCUnIGhlaWdodD0nMTAwJScgZmlsbD0ndXJsKCNjKScvPgoJPHJlY3QgeD0nNTAlJyB3aWR0aD0nNTAlJyBoZWlnaHQ9JzEwMCUnIGZpbGw9J3VybCgjYzIpJy8+Cjwvc3ZnPg==');
+  
+    margin:0; padding:0;
+    overflow-x:hidden;
+    height:100%;
+    font-family: 'Lato', Helvetica, arial, sans-serif;
+    font-weight: 300;
+    font-size: 20px;
+    line-height: 1.45;
+    color: #eee;
+    color: rgba(255,255,255,.85);
+}
+#container { 
+    padding-top: 50px;
+}
+#content {
+    max-width: 43em;
+    padding:10px;
+    margin: 0 auto;
+}
+h1 {
+    font-size: 4.8em;
+    font-weight: 100;
+    text-transform: uppercase;
+    margin: 0;
+}
+h3 {
+    font-size: 2.4em;
+    font-weight: 300;
+    line-height: 1.5;
+}
+p, li {
+    font-size: 1.7em;
+}
+a {
+    font-weight: 700;
+    text-decoration: none;
+    color: #fff;
+}
+a:hover {
+    text-decoration: underline;
+}
+p#pleft {
+    max-width:20em;
+    float:left;
+}
+p#pright {
+    max-width:20em;
+    float:left;
+}
+ul {
+    clear:both;
+}
+
+
+html { font-size: 62.5%; }
+body { font-size: 1em;}
+
+/* PYRAMID CODE */
+.stage {
+  -webkit-transform:scale(1.85);
+  transform:scale(0.85);
+  float:right;
+  margin-right:120px;
+  margin-top:30px;
+  width:0px; height:0px;
+  
+  position:relative;  
+  -webkit-perspective:1200px;
+  -webkit-perspective-origin:50% 50%;
+  perspective:1200px;
+  perspective-origin:50% 50%;
+}
+.pyramid3d {
+  position:relative;
+  width:150px;
+  height:150px;
+  
+  -webkit-transform-style: preserve-3d;
+  transform-style: preserve-3d;
+  -webkit-transform: rotateX(75deg) rotate(65deg);
+  transform: rotateX(75deg) rotate(65deg);
+  -webkit-animation: turnPyramid 10s linear infinite;
+  animation: turnPyramid 10s linear infinite;
+}
+.triangle {
+  -webkit-transform-style:preserve-3d;
+  transform-style:preserve-3d;
+  width:0; height:0;
+  background:none;
+}
+.triangle:before{
+  content:"";
+  position: absolute;
+  height: 0; width: 0;
+  border-style: solid;
+  border-width: 176px 75px 0 75px;
+}
+.side1 { -webkit-transform: translatex(0) rotatey(115.2deg) rotatez(90deg); transform: translatex(0) rotatey(115.2deg) rotatez(90deg); }
+.side2 { -webkit-transform: translatex(150px) rotatez(90deg) rotatex(64.8deg); transform: translatex(150px) rotatez(90deg) rotatex(64.8deg); }
+.side3 {  -webkit-transform: translatez(0) rotatex(64.8deg); transform: translatez(0) rotatex(64.8deg); }
+.side4 { -webkit-transform: translatey(150px) rotatex(115.2deg); transform: translatey(150px) rotatex(115.2deg); }
+.side1:before{ border-color: rgba(115, 115, 0, 0.3) transparent transparent transparent; }
+.side2:before{ border-color: rgba(20, 90, 225, 0.3) transparent transparent transparent; }
+.side3:before{ border-color: rgba(255,   0, 0, 0.3) transparent transparent transparent; } 
+.side4:before{ border-color: rgba(0, 255, 255, 0.3) transparent transparent transparent; }
+
+
+@-webkit-keyframes turnPyramid { 100% { -webkit-transform: rotateX(75deg) rotate(425deg); } }
+@keyframes turnPyramid { 100% { transform: rotateX(75deg) rotate(425deg); } }
+
+@media (max-width: 300px) {
+    html { font-size: 70%; }
+    .stage { -webkit-transform:scale(0.05); transform:scale(0.05); }
+}
+@media (max-width: 440px) {
+    h1 { line-height:55px; }    
+}
+@media (max-width: 460px) { 
+  .stage { position:absolute; top:25px; left:50%; margin-left:-45px; } 
+  h1 { margin-top:50px; text-align:center; }
+}
+@media (max-width:600px) { .stage { -webkit-transform:scale(0.55); transform:scale(0.55); margin-right:60px; } }
+@media (min-width: 600px) {
+    html { font-size: 80%; }
+    .stage { -webkit-transform:scale(0.68); transform:scale(0.68); margin-right:80px; }
+}
+@media (min-width: 880px) {
+    html { font-size: 120%; }
+    p, li { font-size: 1em; }
+    p#pright { margin-left:3em; }
+    .stage { -webkit-transform:scale(0.85); transform:scale(0.85); margin-right:120px; }
+}
+</style>
+</html>
