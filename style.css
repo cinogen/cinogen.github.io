@@ -1,0 +1,74 @@
+html, body {
+	width:100%;
+	height: 100%;
+	font-family: 'Lora', serif;
+	 background: url(mj-crying1.gif) no-repeat center center fixed; 
+	  -webkit-background-size: cover;
+	  -moz-background-size: cover;
+	  -o-background-size: cover;
+	  background-size: cover;
+}
+
+h5 {
+	font-size: 4rem;
+	color: rgba(255, 255, 245, 0.5);
+}
+
+.btn {
+	font-weight: 100000;
+	border-radius: 5000px;
+	text-transform: uppercase;
+}
+
+.btn-large {
+	padding: 1rem 5rem;
+
+}
+
+.btn-large:hover {
+	background-color: rgb(0, 255, 0, 1.0);
+	border-color: rgb(0, 255, 0, 1.0);
+	transform: scale(1.1);
+	transition: 1s;
+}
+
+hr {
+	border-color: rgba(255, 255, 255, 2.0);
+	border-width: 5px;
+	max-width: 1000px;
+	margin: auto;
+	margin-bottom: 5px;
+}
+
+.buffer {
+	height:100px ;
+}
+
+.animate-charcter
+{
+   text-transform: uppercase;
+  background-image: linear-gradient(
+    -225deg,
+    #231557 0%,
+    #44107a 29%,
+    #ff1361 67%,
+    #fff800 100%
+  );
+  background-size: auto auto;
+  background-clip: border-box;
+  background-size: 200% auto;
+  color: #fff;
+  background-clip: text;
+  text-fill-color: transparent;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: textclip 2s linear infinite;
+  display: inline-block;
+      
+}
+
+@keyframes textclip {
+  to {
+    background-position: 200% center;
+  }
+}
